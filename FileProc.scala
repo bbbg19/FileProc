@@ -44,13 +44,11 @@ object HelloWorld {
 		val writer = new PrintWriter(new File("Results.txt"))
 
         	//Print Out Results
-
 		println("Word          Count")
 		for( (key,value)  <-results){
 			try{
 				writer.write(key +  " " * (15 - key.length) +  value + "\n");
 				println(key +  " " * (15 - key.length) +  value )
-
 			}catch{
 				case ex: IOException => {
 					println(ex);
@@ -74,12 +72,9 @@ object HelloWorld {
 			endDirectory.mkdir();
 		}
 
-
 		//open up stream for reading in inputfiles
 		try{
 			val ZipIO = new ZipInputStream( new FileInputStream(inputPath));
-		
-
 			var entry = ZipIO.getNextEntry();
 			
 			//Go through contents of zip folder. For each entry copy results over from zip folder to temp folder that was created
@@ -121,9 +116,7 @@ object HelloWorld {
 				println("Unable to open zip file: " + inputPath + ".");
 				return; 
 			}
-	
 		}
-
 	}
 
    	//Main method used to process directory contents. First gets every text file in main directory, then it decompresses zip files into temp folder, reads contents and then deletes temp folder. Finally calls it self recursively on any 
@@ -193,7 +186,7 @@ object HelloWorld {
 		if (d.exists && d.isDirectory) {
         		d.listFiles.filter(_.isFile).toList.filter { file => 
               		extensions.exists(file.getName.endsWith(_));
-            	}
+	            	}
         	} else {
 			List[File]()
         	}
