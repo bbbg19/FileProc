@@ -25,7 +25,7 @@ object HelloWorld {
 		}     
       
 		//declare map to store word count results 
-		var results:Map[String,Int] = Map()
+		var results:Map[Int,Int] = Map()
       
 		//get input path from commandline arguments and pass to process directory
 	        val inputPath = args(0);  
@@ -35,20 +35,29 @@ object HelloWorld {
       
 
 	//prints results for this program.  A map is passed into this function, if it has a entry, it will print results to console and to results.txt
-	def printresults(results:Map[String,Int]){
+	def printresults(results:Map[Int,Int]){
 		if(results.size == 0){
 			println("No text filees found");
 			return
 		}
 
 		val writer = new PrintWriter(new File("Results.txt"))
-
+		
         	//Print Out Results
-		println("Word          Count")
-		for( (key,value)  <-results){
+		//println("Word Count   Frequency")
+		for( (key,value)  <- results.toSeq.sortBy(_._1)){
 			try{
-				writer.write(key +  " " * (15 - key.length) +  value + "\n");
-				println(key +  " " * (15 - key.length) +  value )
+				//writer.write(key +  " " * (15 - key.length) +  value + "\n");
+				//println(key +  " " * (15 - key.length) +  value )
+				if(value == 1){
+					writer.write(value + " file has " + key + " words");
+					println(value + " file has " + key + " words")
+				
+				}
+				else{
+					writer.write(value + " files have " + key + " words")
+					println(value + " files have " + key + " words")
+				}
 			}catch{
 				case ex: IOException => {
 					println(ex);
@@ -121,14 +130,17 @@ object HelloWorld {
 
    	//Main method used to process directory contents. First gets every text file in main directory, then it decompresses zip files into temp folder, reads contents and then deletes temp folder. Finally calls it self recursively on any 
 	//any directories present
-	def processDirectory(inputPath:String, results: Map[String, Int]){
+	def processDirectory(inputPath:String, results: Map[Int, Int]){
         	//get every text file      
 		val files = getListOfFiles(inputPath, List("txt"));     
 
 	        //Get values from text files  in directory in a map. Use a regex expression to filter for only words, then group toghether.  Combine map with cumulative map results. 
 		for( file <-files){
-		        val map1 = Source.fromFile(file).getLines().flatMap(_.split("\\W+")).toList.groupBy((word: String) => word).mapValues(_.length);
-		        mergeFiles(results, map1);              
+		     //  val map1 = Source.fromFile(file).getLines().flatMap(_.split("\\W+")).toList.groupBy((word: String) => word).mapValues(_.length);
+		       val list1 = Source.fromFile(file).getLines().flatMap(_.split("\\s+")).toList;
+			//println("File Name: " + file + "Number of words: " + list1.size);
+
+		        mergeFiles(results, list1.size);              
 		}
 
 		//get every directory, call this function recursively to get all files in child folders
@@ -150,17 +162,16 @@ object HelloWorld {
    
    
 	//merge results from Map2 into Map1
-	def mergeFiles(map1: Map[String, Int], map2: scala.collection.immutable.Map[String,Int]): Map[String,Int] = {
+	def mergeFiles(map1: Map[Int, Int], filesize: Int ): Map[Int,Int] = {
 	        //go through all the keys in map2, if present in map1 add value to map1 key, otherwise add entry to map1
-	        map2.keys.foreach{ i=>
 			//check if map2 contains values, add if true, otherwise add entry
-	        	if(map1.contains(i)){
-			        map1(i) += map2(i);      
+	        	if(map1.contains(filesize)){
+			        map1(filesize) += 1;      
 	        	}
 	        	else{
-		        	map1 += (i -> map2(i))
+		        	map1 += (filesize -> 1);
 	        	}
-          	}
+          	
 		return map1;
 	}
 	   
