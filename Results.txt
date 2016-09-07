@@ -1,1 +1,6 @@
-4 files have 1 words2 files have 2 words1 file has 3 words1 file has 5 words1 file has 8 words1 file has 77 words
+4 files have 1 word
+2 files have 2 words
+1 file has 3 words
+1 file has 5 words
+1 file has 8 words
+1 file has 77 words

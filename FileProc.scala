@@ -50,13 +50,20 @@ object HelloWorld {
 				//writer.write(key +  " " * (15 - key.length) +  value + "\n");
 				//println(key +  " " * (15 - key.length) +  value )
 				if(value == 1){
-					writer.write(value + " file has " + key + " words");
-					println(value + " file has " + key + " words")
+					writer.write(value + " file has " + key + " word");
+					print(value + " file has " + key + " word")
 				
 				}
 				else{
-					writer.write(value + " files have " + key + " words")
-					println(value + " files have " + key + " words")
+					writer.write(value + " files have " + key + " word")
+					print(value + " files have " + key + " word")
+				}
+				if(key >1){
+					writer.write("s\n");
+					println("s");
+				}else{
+					writer.write("\n");
+					print("\n");
 				}
 			}catch{
 				case ex: IOException => {
@@ -66,7 +73,7 @@ object HelloWorld {
 				}
 			}
 		}
-		println("Results May be found in results.txt");
+		println("Results May be found in Results.txt");
 		writer.close();
 	}
 	
@@ -150,8 +157,9 @@ object HelloWorld {
 		}
       
 		//get every zip file, store unzipped file in new temp directory. Then call process directory on this new folder. Then call system call to recursively delete file. 
-		val zipFiles  = getListOfFiles(inputPath, List("zip"));
+		val zipFiles  = getListOfFiles(inputPath,List("zip"));
 		for(zipPath <- zipFiles){
+
 			unzipDirectory(zipPath.getPath);
 			val path = zipPath.getPath.dropRight(4);
 			processDirectory(path, results);
@@ -180,6 +188,8 @@ object HelloWorld {
 	def getDirectories(dir:String): List[File]= {
        		val myDirectory = new File(dir)
        		if(myDirectory.isDirectory){
+
+
         		myDirectory.listFiles.filter(_.isDirectory).toList
 	        }
         	//no directories, return empty list
@@ -195,9 +205,13 @@ object HelloWorld {
 		val d = new File(dir)
       	
 		if (d.exists && d.isDirectory) {
-        		d.listFiles.filter(_.isFile).toList.filter { file => 
-              		extensions.exists(file.getName.endsWith(_));
-	            	}
+        		
+/*			d.listFiles.filter(extensions.exists(file.getName.endsWith(_));
+	            	}*/
+
+
+			d.listFiles.filter { file => extensions.exists(file.getName.endsWith(_));}.toList;
+			//d.listFiles.filter(_.isFile).toList.filter { file => extensions.exists(file.getName.endsWith(_));}	            	
         	} else {
 			List[File]()
         	}
