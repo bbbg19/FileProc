@@ -17,6 +17,8 @@ import java.util.zip.ZipInputStream;
 import sys.process._
 
 object HelloWorld {
+	//main entry point for program. It will check the input arguments and exit if incorrect number are supplied. Then analyze the contents of the 
+	//directory and print the results out to the screen
 	def main(args: Array[String]) {
 		//Check number of arguments, exit if wrong number supplied		
 		if(args.length !=1){
@@ -37,22 +39,19 @@ object HelloWorld {
 	//prints results for this program.  A map is passed into this function, if it has a entry, it will print results to console and to results.txt
 	def printresults(results:Map[Int,Int]){
 		if(results.size == 0){
-			println("No text filees found");
+			println("No text files found in directory");
 			return
 		}
 
 		val writer = new PrintWriter(new File("Results.txt"))
 		
-        	//Print Out Results
-		//println("Word Count   Frequency")
+        	//Print Out Results, sort them by key
 		for( (key,value)  <- results.toSeq.sortBy(_._1)){
 			try{
-				//writer.write(key +  " " * (15 - key.length) +  value + "\n");
-				//println(key +  " " * (15 - key.length) +  value )
+				//conditional grammer for number of entries
 				if(value == 1){
 					writer.write(value + " file has " + key + " word");
 					print(value + " file has " + key + " word")
-				
 				}
 				else{
 					writer.write(value + " files have " + key + " word")
@@ -77,7 +76,7 @@ object HelloWorld {
 		writer.close();
 	}
 	
-   	//Method used to unzip main folder. Takes in a target directory of zip file
+   	//Method used to unzip main folder. Takes in a target directory of zip file and uses Zip Input stream to unzip contents of files into temp directory that can be processed
 	def unzipDirectory (inputPath:String) {
 		//setup outputpath for unzipped files
 		val outputPath = inputPath.dropRight(4);
@@ -143,11 +142,8 @@ object HelloWorld {
 
 	        //Get values from text files  in directory in a map. Use a regex expression to filter for only words, then group toghether.  Combine map with cumulative map results. 
 		for( file <-files){
-		     //  val map1 = Source.fromFile(file).getLines().flatMap(_.split("\\W+")).toList.groupBy((word: String) => word).mapValues(_.length);
-		       val list1 = Source.fromFile(file).getLines().flatMap(_.split("\\s+")).toList;
-			//println("File Name: " + file + "Number of words: " + list1.size);
-
-		        mergeFiles(results, list1.size);              
+		       val list1 = Source.fromFile(file).getLines().flatMap(_.split("\\W+")).toList;
+		       updateList(results, list1.size);              
 		}
 
 		//get every directory, call this function recursively to get all files in child folders
@@ -169,18 +165,16 @@ object HelloWorld {
    	}
    
    
-	//merge results from Map2 into Map1
-	def mergeFiles(map1: Map[Int, Int], filesize: Int ): Map[Int,Int] = {
-	        //go through all the keys in map2, if present in map1 add value to map1 key, otherwise add entry to map1
-			//check if map2 contains values, add if true, otherwise add entry
-	        	if(map1.contains(filesize)){
-			        map1(filesize) += 1;      
-	        	}
-	        	else{
-		        	map1 += (filesize -> 1);
-	        	}
-          	
-		return map1;
+	//merge results from new file into results map. 
+	def updateList(map1: Map[Int, Int], filesize: Int ): Map[Int,Int] = {
+		//check if map2 contains values, add if true, otherwise add entry
+	       	if(map1.contains(filesize)){
+		        map1(filesize) += 1;      
+	       	}
+	       	else{
+	        	map1 += (filesize -> 1);
+	       	}
+        return map1;
 	}
 	   
 
@@ -188,8 +182,6 @@ object HelloWorld {
 	def getDirectories(dir:String): List[File]= {
        		val myDirectory = new File(dir)
        		if(myDirectory.isDirectory){
-
-
         		myDirectory.listFiles.filter(_.isDirectory).toList
 	        }
         	//no directories, return empty list
@@ -203,15 +195,9 @@ object HelloWorld {
 	//which type of file function will end with. If none of the files are found, will return a empty list   
     	def getListOfFiles(dir: String, extensions: List[String]): List[File] = {
 		val d = new File(dir)
-      	
+		//check valid directory was provided, otherwise return empty list
 		if (d.exists && d.isDirectory) {
-        		
-/*			d.listFiles.filter(extensions.exists(file.getName.endsWith(_));
-	            	}*/
-
-
 			d.listFiles.filter { file => extensions.exists(file.getName.endsWith(_));}.toList;
-			//d.listFiles.filter(_.isFile).toList.filter { file => extensions.exists(file.getName.endsWith(_));}	            	
         	} else {
 			List[File]()
         	}
