@@ -155,11 +155,10 @@ object HelloWorld {
 		//get every zip file, store unzipped file in new temp directory. Then call process directory on this new folder. Then call system call to recursively delete file. 
 		val zipFiles  = getListOfFiles(inputPath,List("zip"));
 		for(zipPath <- zipFiles){
-
 			unzipDirectory(zipPath.getPath);
 			val path = zipPath.getPath.dropRight(4);
 			processDirectory(path, results);
-			//remove directory using unix command
+			//remove temp directory after processing directory contents using unix command
 			val result = "rm -r -f " + path !!;
 		}
    	}
