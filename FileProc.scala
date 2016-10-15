@@ -12,13 +12,17 @@ import scala.io.Source
 import scala.collection.mutable.Map;
 import java.io.File
 import java.util.zip;
+
 import java.util.Arrays;
 import java.util.zip.ZipInputStream;
+
+
 import sys.process._
 
 object HelloWorld {
 	//main entry point for program. It will check the input arguments and exit if incorrect number are supplied. Then analyze the contents of the 
 	//directory and print the results out to the screen
+	//Mana sucks
 	def main(args: Array[String]) {
 		//Check number of arguments, exit if wrong number supplied		
 		if(args.length !=1){
